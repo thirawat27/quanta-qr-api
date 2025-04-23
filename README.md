@@ -1,85 +1,154 @@
-```markdown
-# Quanta QR API
-
-Quanta QR API เป็นบริการ API สำหรับสร้าง **QR Code** เป็นภาพ PNG โดยใช้ Next.js 15 App Router
+ได้เลยครับ ผมจะเพิ่มตัวอย่างการใช้งานเพิ่มเติมให้ครับ ทั้ง cURL, Python, Node.js (axios), PHP และวิธีฝังใน React component ดังนี้:
 
 ---
 
-## 🛠️ Prerequisites
-- Node.js (>=16.x)
-- Next.js 15 (ถ้าจะรันโค้ดในเครื่อง)
+# 🔳 Quanta QR API
+
+API สำหรับสร้าง **QR Code** แบบเรียลไทม์ผ่าน HTTP โดยใช้ Next.js 15  
+​ใช้งานง่าย ส่งข้อความผ่าน Query Parameter แล้วรับกลับเป็นรูปภาพ QR Code ทันที!
+
+> 📌 URL หลักของ API:  
+> `https://quanta-qr-api.vercel.app/api/qrcode`
 
 ---
 
-## 🚀 Endpoint
+## 📌 วิธีใช้งาน
 
+### 🔗 Endpoint
 ```
 GET https://quanta-qr-api.vercel.app/api/qrcode
 ```
 
-### Query Parameters
-| ชื่อพารามิเตอร์ | ประเภท  | คำอธิบาย                         | ตัวอย่าง                      |
-|----------------|--------|----------------------------------|--------------------------------|
-| `value`        | String | ข้อความที่ต้องการเข้ารหัสเป็น QR | `สวัสดี+โลก` หรือ `Hello+World` |
+### 📥 พารามิเตอร์ที่รองรับ
 
-> **หมายเหตุ:**
-> - ถ้าไม่กำหนด `value` ระบบจะสร้าง QR Code จากข้อความเริ่มต้น `Hello, Next.js 15!`
+| พารามิเตอร์ | คำอธิบาย                      | ตัวอย่าง                    |
+|-------------|-------------------------------|-----------------------------|
+| `value`     | ข้อความที่ต้องการแปลงเป็น QR | `สวัสดี โลก`, `Hello+QR!`  |
+
+> ✅ **หมายเหตุ**: ต้องส่งค่า `value` แบบ URL encoded หากมีช่องว่างหรืออักขระพิเศษ
 
 ---
 
-## 🔍 วิธีใช้งาน
+## ✅ ตัวอย่างการเรียกใช้งาน
 
-### 1. ใช้ผ่าน Curl
-```bash
-curl "https://quanta-qr-api.vercel.app/api/qrcode?value=สวัสดี+โลก" \
-     --output qrcode.png
+### 1. ผ่านเบราว์เซอร์
 ```
-ผลลัพธ์:
-- ได้ไฟล์ `qrcode.png` ซึ่งเป็นรูปภาพ QR Code
-
-### 2. ใช้ fetch ใน JavaScript
-```js
-fetch('https://quanta-qr-api.vercel.app/api/qrcode?value=สวัสดี+โลก')
-  .then(res => {
-    if (!res.ok) throw new Error('Failed to fetch QR code');
-    return res.blob();
-  })
-  .then(blob => {
-    // สร้าง URL ชั่วคราวเพื่อแสดงหรือดาวน์โหลด
-    const url = URL.createObjectURL(blob);
-    const img = document.createElement('img');
-    img.src = url;
-    document.body.appendChild(img);
-  })
-  .catch(console.error);
+https://quanta-qr-api.vercel.app/api/qrcode?value=สวัสดี+โลก
 ```
+​จะได้ภาพ PNG ของ QR Code เมื่อสแกนได้ข้อความว่า `สวัสดี โลก`
 
-### 3. ตัวอย่างในเครื่อง (Local)
+---
+
+### 2. cURL
 ```bash
-# หลังจากรันเซิร์ฟเวอร์ด้วย
-npm run dev
+curl -o qr.png "https://quanta-qr-api.vercel.app/api/qrcode?value=Hello%20World"
+```
+จะดาวน์โหลดไฟล์ `qr.png` มาในโฟลเดอร์ปัจจุบัน
 
-# เปิดเบราว์เซอร์ไปที่
-http://localhost:3000/api/qrcode?value=สวัสดี+โลก
+---
+
+### 3. JavaScript (fetch ใน Browser)
+```html
+<img id="qrImage" alt="QR Code" />
+
+<script>
+  const url = 'https://quanta-qr-api.vercel.app/api/qrcode?value=Next.js+QR';
+  fetch(url)
+    .then(res => res.blob())
+    .then(blob => {
+      document.getElementById('qrImage').src = URL.createObjectURL(blob);
+    })
+    .catch(console.error);
+</script>
 ```
 
 ---
 
-## 🎨 ปรับแต่งเพิ่มเติม
-คุณสามารถแก้ไขโค้ดในไฟล์ `app/api/qrcode/route.js` เพื่อ:
-- กำหนดขนาดของ QR Code
-- เปลี่ยนสีหรือความละเอียด
-- ตั้งค่าตัวเลือกอื่น ๆ ของไลบรารี `qrcode`
-
-ตัวอย่างการปรับขนาด:
+### 4. Node.js (ใช้ axios)
 ```js
-// เพิ่ม options
-const buffer = await QRCode.toBuffer(text, {
-  type: 'png',
-  width: 300,
-  margin: 2,
-});
+import fs from 'fs';
+import axios from 'axios';
+
+async function generateQR() {
+  const url = 'https://quanta-qr-api.vercel.app/api/qrcode?value=Node.js+QR';
+  const response = await axios.get(url, { responseType: 'arraybuffer' });
+  fs.writeFileSync('qr-node.png', response.data);
+  console.log('QR saved to qr-node.png');
+}
+
+generateQR().catch(console.error);
 ```
+
+---
+
+### 5. Python (ใช้ requests)
+```python
+import requests
+
+def download_qr(text, filename='qr_py.png'):
+    url = 'https://quanta-qr-api.vercel.app/api/qrcode'
+    params = {'value': text}
+    r = requests.get(url, params=params)
+    if r.status_code == 200:
+        with open(filename, 'wb') as f:
+            f.write(r.content)
+        print(f'QR saved to {filename}')
+    else:
+        print('Error:', r.status_code, r.text)
+
+download_qr('สวัสดี+Python')
+```
+
+---
+
+### 6. PHP (ใช้ cURL)
+```php
+<?php
+$text = 'สวัสดี+PHP';
+$url = "https://quanta-qr-api.vercel.app/api/qrcode?value={$text}";
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$data = curl_exec($ch);
+curl_close($ch);
+
+file_put_contents('qr_php.png', $data);
+echo "QR saved to qr_php.png\n";
+?>
+```
+
+---
+
+### 7. React Component
+```jsx
+import { useState, useEffect } from 'react';
+
+export default function QRGenerator({ text }) {
+  const [src, setSrc] = useState('');
+
+  useEffect(() => {
+    const encoded = encodeURIComponent(text);
+    setSrc(`https://quanta-qr-api.vercel.app/api/qrcode?value=${encoded}`);
+  }, [text]);
+
+  return (
+    <div>
+      <h3>QR for: {text}</h3>
+      <img src={src} alt={`QR code for ${text}`} />
+    </div>
+  );
+}
+```
+```jsx
+// ใช้งานในเพจ
+<QRGenerator text="สวัสดี React" />
+```
+
+---
+
+## ⚠️ ข้อควรระวัง
+- ค่าที่ส่งผ่าน `value` **ต้องเข้ารหัส URL (URL encode)** เสมอ  
+- หากไม่ส่งค่า `value` ระบบจะใช้ข้อความดีฟอลต์ `Hello, Next.js 15!`  
 
 ---
 
