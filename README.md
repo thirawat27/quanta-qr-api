@@ -68,12 +68,6 @@ Content-Type: application/json
 { "error": "Failed to generate QR Code" }
 ```
 
-## การ Deploy
-คุณสามารถ deploy โปรเจกต์นี้บน Vercel, Netlify หรือ Cloud Provider ใดก็ได้ที่รองรับ Next.js 15 เพียงตั้งค่า Build Command เป็น `npm run build` และ Start Command เป็น `npm start` (หรือใช้ `vercel` CLI)
-
-## สรุป
-ด้วย README นี้ คุณสามารถติดตั้ง รัน และใช้งาน API สร้าง QR Code ได้อย่างรวดเร็ว โดยนำไปใช้ในแอปพลิเคชัน ฝั่ง client หรือระบบอื่น ๆ ตามต้องการ
-
 ---
 
 
