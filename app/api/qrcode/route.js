@@ -12,7 +12,12 @@ export async function GET(request) {
     // ส่งกลับภาพ PNG พร้อม header ที่เหมาะสม
     return new NextResponse(buffer, {
       status: 200,
-      headers: { 'Content-Type': 'image/png' }
+      headers: { 
+      'Content-Type': 'image/png',
+      'Cache-Control': 'max-age=3600',
+      'Access-Control-Allow-Origin': '*'
+       }
+
     })
   } catch (error) {
     // กรณีเกิดข้อผิดพลาด ให้คืน JSON พร้อม status 500
